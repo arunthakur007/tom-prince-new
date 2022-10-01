@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Inner Page - Arsha Bootstrap Template</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="static/vendor/aos/aos.css" rel="stylesheet">
+    <link href="static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="static/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="static/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="static/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="static/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="static/css/style.css" rel="stylesheet">
+    <link href="static/css/main.css" rel="stylesheet">
+  </head>
+<style>
+
+
+</style>
+  <body>
+    <header id="header" class="fixed-top header-inner-pages">
+      <div class="container d-flex align-items-center">
+        <h1 class="logo me-auto">
+          <a >Search Number</a>
+        </h1>
+        <nav id="navbar" class="navbar">
+          <ul>
+            <li>
+              <a class="getstarted scrollto" href="upload">Get Bulk</a>
+            </li>
+          </ul>
+          <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>
+
+      </div>
+    </header>
+
+    <main id="main">
+        <div class="container">
+          <ol>
+
+          </ol>
+        </div>
+
+    </main>
+
+
+    <footer id="footer">
+      <div class="footer-newsletter">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-6">
+              <div class="container">
+                <div class="row">
+                  <h1>Search A Number</h1>
+                 <form action="" method="post">
+                    <input type="text" name="search_data" size="48" class = "tempts">
+                    <input type=submit value=search>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <div class="container">
+    {% if data %}
+      <button type="button" onclick="tableToCSV()" class="btn btn-success ml-auto" style="float:right;">Download Excel Document</button>
+      <br><br>
+      <table class="table">
+        <tr>
+          <th>Full Name</th>
+          <th>Age</th>
+          <th>Date Of Birth</th>
+          <th>Address </th>
+           <th>Phone Number</th>
+        </tr>
+
+    {% for item in data.get("persons") %}
+    <tr>
+        <td>{{ item.get('name').get('firstName') }} {{ item.get('name').get('middleName') }} {{ item.get('name').get('lastName') }}</td>
+        <td>{{ item.get("age") }}</td>
+      {% if item.get("dobFirstSeen")[0]|length > 0 %}
+        <td>{{ item.get("dobFirstSeen") }}</td>
+       {% else %}
+      <td>dobFirstSeen not found..</td>
+      {% endif %}
+      {% if item.get("addresses")[0]|length > 0 %}
+       <td> {{ item.get("addresses")[0].get("fullAddress").replace(";","").replace(",","")  }}</td>
+      {% else %}
+      <td>Addresses not found..</td>
+      {% endif %}
+        {% if item.get("phoneNumbers")[0]|length > 0 %}
+        <td>{{ item.get("phoneNumbers")[0].get("phoneNumber") }}</td>
+      {% else %}
+        <td>Number not found..</td>
+
+      {% endif %}
+    </tr>
+    {% endfor %}
+    </table>
+    {% else %}
+    <h1>Please Search to get data into table.</h1>
+    {% endif %}
+  </div>
+    <script src="./static/vendor/aos/aos.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="static/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="static/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="static/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="static/vendor/waypoints/noframework.waypoints.js"></script>
+    <script src="static/vendor/php-email-form/validate.js"></script>
+    <script src="static/js/main.js"></script>
+  </body>
+  <script type="text/javascript">
+    function tableToCSV() {
+      // Variable to store the final csv data
+      var csv_data = [];
+      // Get each row data
+      var rows = document.getElementsByTagName('tr');
+      for (var i = 0; i < rows.length; i++) {
+        // Get each column data
+        var cols = rows[i].querySelectorAll('td,th');
+        // Stores each csv row data
+        var csvrow = [];
+        for (var j = 0; j < cols.length; j++) {
+          // Get the text data of each cell
+          // of a row and push it to csvrow
+          csvrow.push(cols[j].innerHTML);
+        }
+        // Combine each column value with comma
+        csv_data.push(csvrow.join(","));
+      }
+      // Combine each row data with new line character
+      csv_data = csv_data.join('\n');
+      // Call this function to download csv file
+      downloadCSVFile(csv_data);
+    }
+
+    function downloadCSVFile(csv_data) {
+      // Create CSV file object and feed
+      // our csv_data into it
+      CSVFile = new Blob([csv_data], {
+        type: "text/csv"
+      });
+      // Create to temporary link to initiate
+      // download process
+      var temp_link = document.createElement('a');
+      // Download csv file
+      temp_link.download = "Records.csv";
+      var url = window.URL.createObjectURL(CSVFile);
+      temp_link.href = url;
+      // This link should not be displayed
+      temp_link.style.display = "none";
+      document.body.appendChild(temp_link);
+      // Automatically click the link to
+      // trigger download
+      temp_link.click();
+      document.body.removeChild(temp_link);
+    }
+  </script>
+</html>
+
